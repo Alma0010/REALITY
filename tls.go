@@ -230,8 +230,10 @@ func Server(ctx context.Context, conn net.Conn, config *Config) (*Conn, error) {
 					break // ensure order
 				}
 			}
-			if peerPub2 == nil {
-				break // reject outdated/strange Client Hello that doesn't have X25519MLKEM768 before optional X25519
+			// Accept classical X25519 as well as hybrid key shares. The session-ID
+			// authentication below still verifies possession of the REALITY key.
+			if peerPub == nil && peerPub2 == nil {
+				break
 			}
 			if peerPub == nil {
 				peerPub = peerPub2 // secondary choice: X25519 in X25519MLKEM768
